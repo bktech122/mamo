@@ -1,350 +1,430 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ডায়াগনস্টিক মেমো</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      font-family: 'Arial', sans-serif;
+      background: #f5f5f5;
       padding: 20px;
     }
-    .memo {
-      background: #fff;
-      max-width: 900px;
+    .memo-container {
+      max-width: 800px;
       margin: auto;
-      padding: 20px;
+      background: #fff;
+      padding: 25px 40px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      text-align: center;
+    .logo-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
       margin-bottom: 20px;
     }
+    .logo-header img {
+      width: 70px;
+    }
+    .logo-header .center-info {
+      flex: 1;
+      text-align: center;
+    }
+    .logo-header .center-info h2 {
+      margin: 0;
+    }
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      flex: 1;
+    }
     label {
+      display: block;
       font-weight: bold;
+      margin-bottom: 5px;
     }
     input, select {
       width: 100%;
       padding: 8px;
-      margin: 5px 0 15px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      font-size: 14px;
+    }
+    select#testSelect {
+      font-size: 14px;
+      max-width: 300px;
+      padding: 6px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 15px;
     }
     th, td {
-      border: 1px solid #999;
+      border: 1px solid #ddd;
       padding: 8px;
-      text-align: left;
+      text-align: center;
     }
     th {
-      background-color: #eee;
+      background: #eee;
     }
     .totals {
       text-align: right;
       margin-top: 20px;
+      font-size: 16px;
     }
-    .btn {
-      background: #38b000;
-      color: white;
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
       padding: 10px 20px;
+      background: green;
+      color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 15px;
     }
-    .btn-print {
-      background: #0077b6;
+    button.clear {
+      background: red;
     }
-    .btn-reset {
-      background: #e63946;
-    }
-    @media print {
-      .no-print {
-        display: none;
-      }
+    /* Add a small delete button style */
+    .delete-btn {
+      background: #d9534f;
+      border: none;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
     }
   </style>
 </head>
 <body>
+  <div class="memo-container">
+    <div class="logo-header">
+      <img src="https://f.top4top.io/p_3495hgv4b0.png" alt="Logo" />
+      <div class="center-info">
+        <h2>নোভা ডায়াগনস্টিক সেন্টার</h2>
+        <p>কালীগঞ্জ, ঝিনাইদহ | ফোন: 01736311244</p>
+      </div>
+    </div>
 
-<div class="memo" id="printArea">
-  <h2>ডায়াগনস্টিক সেন্টার - ভাউচার</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="patientName">রোগীর নাম</label>
+        <input type="text" id="patientName" />
+      </div>
+      <div class="form-group">
+        <label for="patientAge">বয়স</label>
+        <div style="display: flex; gap: 5px;">
+          <input type="number" id="patientAge" placeholder="বয়স" />
+          <select id="ageUnit">
+            <option value="বছর">বছর</option>
+            <option value="মাস">মাস</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="gender">লিঙ্গ</label>
+        <select id="gender">
+          <option value="পুরুষ">পুরুষ</option>
+          <option value="মহিলা">মহিলা</option>
+          <option value="অন্যান্য">অন্যান্য</option>
+        </select>
+      </div>
+    </div>
 
-  <div class="no-print">
-    <label>রোগীর নাম:</label>
-    <input type="text" id="patientName" placeholder="রোগীর নাম">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="mobile">মোবাইল নাম্বার</label>
+        <input type="text" id="mobile" placeholder="01×××××××××" />
+      </div>
+      <div class="form-group">
+        <label for="doctorName">রেফার্ড/ডাক্তার</label>
+        <input type="text" id="doctorName" />
+      </div>
+      <div class="form-group">
+        <label for="date">তারিখ</label>
+        <input type="date" id="date" />
+      </div>
+    </div>
 
-    <label>বয়স:</label>
-    <input type="number" id="patientAge" placeholder="বয়স">
+    <label for="testSelect">টেস্ট নির্বাচন করুন</label>
+    <select id="testSelect">
+      <option value="">-- টেস্ট নির্বাচন করুন --</option>
+      <option value="Whole Abdomen - 900">Whole Abdomen</option>
+<option value="HBS - 900">HBS</option>
+<option value="Pelvic Organs - 700">Pelvic Organs</option>
+<option value="KUB/PG Profile - 700">KUB/PG Profile</option>
+<option value="Double System - 700">Double System</option>
+<option value="Breast - 900">Breast</option>
+<option value="Abdominal Lump - 1000">Abdominal Lump</option>
+<option value="Testis/Scrotum - 1000">Testis/Scrotum</option>
+<option value="Thyroid Gland - 800">Thyroid Gland</option>
+<option value="Echocardiogram - 1000">Echocardiogram</option>
+<option value="ECG - 300">ECG</option>
+<option value="Urine R/M/E - 100">Urine R/M/E</option>
+<option value="C/S - 800">C/S</option>
+<option value="Pregnancy Test - 150">Pregnancy Test</option>
+<option value="Ketone Bodies - 100">Ketone Bodies</option>
+<option value="24 HRS Total Protein & Volume - 1000">24 HRS Total Protein & Volume</option>
+<option value="Stool R/M/E - 200">Stool R/M/E</option>
+<option value="OBT - 300">OBT</option>
+<option value="Redu Substance - 200">Redu Substance</option>
+<option value="CBC - 450">CBC</option>
+<option value="CP - 350">CP</option>
+<option value="HB%/TC/DC/ESR - 120">HB%/TC/DC/ESR</option>
+<option value="MP - 200">MP</option>
+<option value="TC of RBC - 200">TC of RBC</option>
+<option value="BT/CT - 200">BT/CT</option>
+<option value="Platelet Count - 200">Platelet Count</option>
+<option value="Blood Film Study with CBC - 300">Blood Film Study with CBC</option>
+<option value="PBF Study - 500">PBF Study</option>
+<option value="Prothrombin Time - 500">Prothrombin Time</option>
+<option value="MCV - 200">MCV</option>
+<option value="PCV - 200">PCV</option>
+<option value="Circulating E.Count - 200">Circulating E.Count</option>
+<option value="Hb-Electrophoresis - 1600">Hb-Electrophoresis</option>
+<option value="Sugar (One Sample) - 100">Sugar (One Sample)</option>
+<option value="Fasting - 100">Fasting</option>
+<option value="Random - 100">Random</option>
+<option value="2 HRS after /Glucose with CUS - 150">2 HRS after /Glucose with CUS</option>
+<option value="GTT with CUS - 500">GTT with CUS</option>
+<option value="S. Bilirubin (Total) - 200">S. Bilirubin (Total)</option>
+<option value="SGOT - 200">SGOT</option>
+<option value="SGPT - 200">SGPT</option>
+<option value="S. ALK Phosphatase - 500">S. ALK Phosphatase</option>
+<option value="S. ACID Phosphatase - 800">S. ACID Phosphatase</option>
+<option value="S. Amylase - 1200">S. Amylase</option>
+<option value="S. CPK - 1200">S. CPK</option>
+<option value="S. LDL - 400">S. LDL</option>
+<option value="S. Cholestrol (Total) - 400">S. Cholestrol (Total)</option>
+<option value="TG - 400">TG</option>
+<option value="HDL - 400">HDL</option>
+<option value="S. Lipid Profile - 600">S. Lipid Profile</option>
+<option value="S. Urea - 500">S. Urea</option>
+<option value="S. Creatinine - 500">S. Creatinine</option>
+<option value="S. Total Protein - 500">S. Total Protein</option>
+<option value="S. Albumin - 500">S. Albumin</option>
+<option value="S. Uric Acid - 500">S. Uric Acid</option>
+<option value="S. Calcium - 500">S. Calcium</option>
+<option value="S. LFT - 1200">S. LFT</option>
+<option value="S. RFT - 1000">S. RFT</option>
+<option value="HCV - 1000">HCV</option>
+<option value="Hbe Ag - 1000">Hbe Ag</option>
+<option value="ASO Titre - 500">ASO Titre</option>
+<option value="RA Test - 500">RA Test</option>
+<option value="Hbs Ag - 500">Hbs Ag</option>
+<option value="Hbs Ag (Confirmatory) - 1000">Hbs Ag (Confirmatory)</option>
+<option value="VDRL - 500">VDRL</option>
+<option value="TPHA - 500">TPHA</option>
+<option value="Blood Group - 100">Blood Group</option>
+<option value="Widal Test - 400">Widal Test</option>
+<option value="Aldehyde Test - 400">Aldehyde Test</option>
+<option value="ICT for Filaria - 1000">ICT for Filaria</option>
+<option value="ICT for Kalazar - 1000">ICT for Kalazar</option>
+<option value="Rosewaaler Test - 800">Rosewaaler Test</option>
+<option value="CR Protein - 500">CR Protein</option>
+<option value="ANT IGE - 1200">ANT IGE</option>
+<option value="ANF IGM - 1200">ANF IGM</option>
+<option value="ANT IGG - 1200">ANT IGG</option>
+<option value="RH Antibody Titre - 1200">RH Antibody Titre</option>
+<option value="Coomb's Test (Direct) - 1000">Coomb's Test (Direct)</option>
+<option value="S. Bilirubin (Dir/Indirect) - 200">S. Bilirubin (Dir/Indirect)</option>
+<option value="ICT Tuber Culosis - 1200">ICT Tuber Culosis</option>
+<option value="HBV-DHA - 1200">HBV-DHA</option>
+<option value="HIV - 1200">HIV</option>
+<option value="Fluid R/M/E - 800">Fluid R/M/E</option>
+<option value="Malignant-Cell - 1000">Malignant-Cell</option>
+<option value="S. Lipise - 1200">S. Lipise</option>
+<option value="PAP'S Smear - 800">PAP'S Smear</option>
+<option value="T3 - 800">T3</option>
+<option value="T4 - 800">T4</option>
+<option value="TSH - 800">TSH</option>
+<option value="LH - 800">LH</option>
+<option value="FSH - 1200">FSH</option>
+<option value="Oestrogen - 1200">Oestrogen</option>
+<option value="Progesterone - 1200">Progesterone</option>
+<option value="Testosterone - 1200">Testosterone</option>
+<option value="Growth Hormone - 1500">Growth Hormone</option>
+<option value="Alpha Feto Protein - 1500">Alpha Feto Protein</option>
+<option value="PSA - 1200">PSA</option>
+<option value="Hbs Ag - Elisa - 1000">Hbs Ag - Elisa</option>
+<option value="S. Triglyceride - 400">S. Triglyceride</option>
+<option value="BUN - 400">BUN</option>
+<option value="S. Globulin - 500">S. Globulin</option>
+<option value="S. A G Ratio - 1000">S. A G Ratio</option>
+<option value="Electrolytes (Na, K, Cl) - 1200">Electrolytes (Na, K, Cl)</option>
+<option value="LFT (3 Sample) - 1200">LFT (3 Sample)</option>
+<option value="LFT (4 Sample) - 1200">LFT (4 Sample)</option>
+<option value="Histopath - 2000">Histopath</option>
+<option value="Chest P/A View iaiv (Rt/Lt) - 450">Chest P/A View iaiv (Rt/Lt)</option>
+<option value="Chest Oblique (Rt/Lt) View - 450">Chest Oblique (Rt/Lt) View</option>
+<option value="BA Meal S/D - 1000">BA Meal S/D</option>
+<option value="BA Swallow Oesopha - 1000">BA Swallow Oesopha</option>
+<option value="BA Enema Double Contrast - 1000">BA Enema Double Contrast</option>
+<option value="COG - 600">COG</option>
+<option value="KUB - 450">KUB</option>
+<option value="IVU - 1800">IVU</option>
+<option value="RGU/MCU - 1800">RGU/MCU</option>
+<option value="Sinogram - 450">Sinogram</option>
+<option value="Sialogram - 450">Sialogram</option>
+<option value="L/S Spine B/V - 600">L/S Spine B/V</option>
+<option value="Cervical Spine B/V - 600">Cervical Spine B/V</option>
+<option value="Naso Pharynx B/V - 450">Naso Pharynx B/V</option>
+<option value="Naso Pharynx (Rt/Lt) - 450">Naso Pharynx (Rt/Lt)</option>
+<option value="Mastoid B/V - 450">Mastoid B/V</option>
+<option value="Mastoid T/T - 500">Mastoid T/T</option>
+<option value="PNS OM View - 450">PNS OM View</option>
+<option value="X-ray Film Size 12/15 (Analog) - 450">X-ray Film Size 12/15 (Analog)</option>
+<option value="X-ray Film Size 10/12 (Analog) - 320">X-ray Film Size 10/12 (Analog)</option>
+<option value="X-ray Film Size 8/10 (Analog) - 250">X-ray Film Size 8/10 (Analog)</option>
+<option value="Throat Swab C/S - 800">Throat Swab C/S</option>
+<option value="KLB - 1000">KLB</option>
+<option value="Sputum AFB - 500">Sputum AFB</option>
+<option value="A/E - 400">A/E</option>
+<option value="Tuberculin Test - 500">Tuberculin Test</option>
+<option value="EAR Swab C/S - 800">EAR Swab C/S</option>
+<option value="PUS C/S - 800">PUS C/S</option>
+<!-- আরও টেস্ট যোগ করুন প্রয়োজন অনুযায়ী -->
+    </select>
 
-    <label>ডাক্তারের নাম:</label>
-    <input type="text" id="doctorName" placeholder="রেফার্ড/ডাক্তারের নাম">
+    <table>
+      <thead>
+        <tr>
+          <th>টেস্টের নাম</th>
+          <th>মূল্য (৳)</th>
+          <th>অপশন</th>
+        </tr>
+      </thead>
+      <tbody id="testList"></tbody>
+    </table>
 
-    <label>তারিখ:</label>
-    <input type="date" id="date">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="discount">ডিসকাউন্ট (৳)</label>
+        <input type="number" id="discount" min="0" value="0" />
+      </div>
+      <div class="form-group">
+        <label for="dueAmount">বকেয়া (৳)</label>
+        <input type="number" id="dueAmount" min="0" value="0" />
+      </div>
+    </div>
+
+    <div class="totals">
+      <p>মোট টেস্ট মূল্য: <strong>৳ <span id="totalBill">0</span></strong></p>
+      <p>ডিসকাউন্টের পর মোট: <strong>৳ <span id="finalBill">0</span></strong></p>
+      <p>বকেয়াসহ মোট বিল: <strong>৳ <span id="dueBill">0</span></strong></p>
+    </div>
+
+    <div class="button-group">
+      <button id="printButton">ভাউচার প্রিন্ট করুন</button>
+      <button class="clear" id="clearButton">মুছুন</button>
+    </div>
   </div>
 
-  <label>টেস্ট নির্বাচন করুন:</label>
-  <select id="testSelect">
-    <option value="">-- টেস্ট সিলেক্ট করুন --</option>
-  </select>
-
-  <table id="testTable">
-    <thead>
-      <tr>
-        <th>ক্রমিক</th>
-        <th>টেস্টের নাম</th>
-        <th>মূল্য (৳)</th>
-        <th class="no-print">রিমুভ</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <label>ডিসকাউন্ট (৳):</label>
-  <input type="number" id="discount" value="0" oninput="calculateTotal()">
-
-  <label>বকেয়া বিল (৳):</label>
-  <input type="number" id="due" value="0" oninput="calculateTotal()">
-
-  <div class="totals">
-    <p>মোট: <strong><span id="total">0</span> ৳</strong></p>
-    <p>সর্বশেষ মোট (ডিসকাউন্ট ও বকেয়া সহ): <strong><span id="finalTotal">0</span> ৳</strong></p>
-  </div>
-
-  <div class="no-print" style="display: flex; gap: 10px;">
-    <button class="btn btn-print" onclick="window.print()">🖨️ প্রিন্ট ভাউচার</button>
-    <button class="btn btn-reset" onclick="resetForm()">🔄 নতুন ভাউচার</button>
-  </div>
-</div>
-
-<script>
-  const testList = [
-    { name: "Whole Abdomen", price: 900 },
-{ name: "HBS", price: 900 },
-{ name: "Pelvic Organs", price: 700 },
-{ name: "KUB/PG Profile", price: 700 },
-{ name: "Double System", price: 700 },
-{ name: "Breast", price: 900 },
-{ name: "Abdominal Lump", price: 1000 },
-{ name: "Testis/Scrotum", price: 1000 },
-{ name: "Thyroid Gland", price: 800 },
-{ name: "Echocardiogram", price: 1000 },
-{ name: "ECG", price: 300 },
-
-{ name: "Urine R/M/E", price: 100 },
-{ name: "C/S", price: 800 },
-{ name: "Pregnancy Test", price: 150 },
-{ name: "Ketone Bodies", price: 100 },
-{ name: "24 HRS Total Protein & Volume", price: 1000 },
-
-{ name: "Stool R/M/E", price: 200 },
-{ name: "OBT", price: 300 },
-{ name: "Redu Substance", price: 200 },
-
-{ name: "CBC", price: 450 },
-{ name: "CP", price: 350 },
-{ name: "HB%/TC/DC/ESR", price: 120 },
-{ name: "MP", price: 200 },
-{ name: "TC of RBC", price: 200 },
-{ name: "BT/CT", price: 200 },
-{ name: "Platelet Count", price: 200 },
-{ name: "Blood Film Study with CBC", price: 300 },
-{ name: "PBF Study", price: 500 },
-{ name: "Prothrombin Time", price: 500 },
-{ name: "MCV", price: 200 },
-{ name: "PCV", price: 200 },
-{ name: "Circulating E.Count", price: 200 },
-{ name: "Hb-Electrophoresis", price: 1600 },
-
-{ name: "Sugar (One Sample)", price: 100 },
-{ name: "Fasting", price: 100 },
-{ name: "Random", price: 100 },
-{ name: "2 HRS after /Glucose with CUS", price: 150 },
-{ name: "GTT with CUS", price: 500 },
-{ name: "S. Bilirubin (Total)", price: 200 },
-{ name: "SGOT", price: 200 },
-{ name: "SGPT", price: 200 },
-{ name: "S. ALK Phosphatase", price: 500 },
-{ name: "S. ACID Phosphatase", price: 800 },
-{ name: "S. Amylase", price: 1200 },
-{ name: "S. CPK", price: 1200 },
-{ name: "S. LDL", price: 400 },
-{ name: "S. Cholestrol (Total)", price: 400 },
-{ name: "TG", price: 400 },
-{ name: "HDL", price: 400 },
-{ name: "S. Lipid Profile", price: 600 },
-{ name: "S. Urea", price: 500 },
-{ name: "S. Creatinine", price: 500 },
-{ name: "S. Total Protein", price: 500 },
-{ name: "S. Albumin", price: 500 },
-{ name: "S. Uric Acid", price: 500 },
-{ name: "S. Calcium", price: 500 },
-{ name: "S. LFT", price: 1200 },
-{ name: "S. RFT", price: 1000 },
-{ name: "HCV", price: 1000 },
-{ name: "Hbe Ag", price: 1000 },
-
-{ name: "ASO Titre", price: 500 },
-{ name: "RA Test", price: 500 },
-{ name: "Hbs Ag", price: 500 },
-{ name: "Hbs Ag (Confirmatory)", price: 1000 },
-{ name: "VDRL", price: 500 },
-{ name: "TPHA", price: 500 },
-{ name: "Blood Group", price: 100 },
-{ name: "Widal Test", price: 400 },
-{ name: "Aldehyde Test", price: 400 },
-{ name: "ICT for Filaria", price: 1000 },
-{ name: "ICT for Kalazar", price: 1000 },
-{ name: "Rosewaaler Test", price: 800 },
-{ name: "CR Protein", price: 500 },
-{ name: "ANT IGE", price: 1200 },
-{ name: "ANF IGM", price: 1200 },
-{ name: "ANT IGG", price: 1200 },
-{ name: "RH Antibody Titre", price: 1200 },
-{ name: "Coomb's Test (Direct)", price: 1000 },
-{ name: "S. Bilirubin (Dir/Indirect)", price: 200 },
-{ name: "ICT Tuber Culosis", price: 1200 },
-{ name: "HBV-DHA", price: 1200 },
-{ name: "HIV", price: 1200 },
-{ name: "Fluid R/M/E", price: 800 },
-{ name: "Malignant-Cell", price: 1000 },
-{ name: "S. Lipise", price: 1200 },
-{ name: "PAP'S Smear", price: 800 },
-
-{ name: "T3", price: 800 },
-{ name: "T4", price: 800 },
-{ name: "TSH", price: 800 },
-{ name: "LH", price: 800 },
-{ name: "FSH", price: 1200 },
-{ name: "Oestrogen", price: 1200 },
-{ name: "Progesterone", price: 1200 },
-{ name: "Testosterone", price: 1200 },
-{ name: "Growth Hormone", price: 1500 },
-{ name: "Alpha Feto Protein", price: 1500 },
-{ name: "PSA", price: 1200 },
-{ name: "Hbs Ag - Elisa", price: 1000 },
-{ name: "S. Triglyceride", price: 400 },
-{ name: "BUN", price: 400 },
-{ name: "S. Globulin", price: 500 },
-{ name: "S. A G Ratio", price: 1000 },
-
-{ name: "Electrolytes (Na, K, Cl)", price: 1200 },
-{ name: "LFT (3 Sample)", price: 1200 },
-{ name: "LFT (4 Sample)", price: 1200 },
-{ name: "Histopath", price: 2000 },
-
-{ name: "Chest P/A View iaiv (Rt/Lt)", price: 450 },
-{ name: "Chest Oblique (Rt/Lt) View", price: 450 },
-{ name: "BA Meal S/D", price: 1000 },
-{ name: "BA Swallow Oesopha", price: 1000 },
-{ name: "BA Enema Double Contrast", price: 1000 },
-{ name: "COG", price: 600 },
-{ name: "KUB", price: 450 },
-{ name: "IVU", price: 1800 },
-{ name: "RGU/MCU", price: 1800 },
-{ name: "Sinogram", price: 450 },
-{ name: "Sialogram", price: 450 },
-{ name: "L/S Spine B/V", price: 600 },
-{ name: "Cervical Spine B/V", price: 600 },
-{ name: "Naso Pharynx B/V", price: 450 },
-{ name: "Naso Pharynx (Rt/Lt)", price: 450 },
-{ name: "Mastoid B/V", price: 450 },
-{ name: "Mastoid T/T", price: 500 },
-{ name: "PNS OM View", price: 450 },
-{ name: "X-ray Film Size 12/15 (Analog)", price: 450 },
-{ name: "X-ray Film Size 10/12 (Analog)", price: 320 },
-{ name: "X-ray Film Size 8/10 (Analog)", price: 250 },
-
-{ name: "Throat Swab C/S", price: 800 },
-{ name: "KLB", price: 1000 },
-{ name: "Sputum AFB", price: 500 },
-{ name: "A/E", price: 400 },
-{ name: "Tuberculin Test", price: 500 },
-{ name: "EAR Swab C/S", price: 800 },
-{ name: "PUS C/S", price: 800 }
-    // আরও টেস্ট এখানে যুক্ত করতে পারেন
-  ];
-
-  const testSelect = document.getElementById("testSelect");
-  const testTable = document.getElementById("testTable").querySelector("tbody");
-
-  // Populate dropdown
-  testList.forEach(test => {
-    const option = document.createElement("option");
-    option.value = test.price;
-    option.textContent = `${test.name} - ${test.price}৳`;
-    option.dataset.name = test.name;
-    testSelect.appendChild(option);
-  });
-
-  testSelect.addEventListener("change", function () {
-    const selectedOption = this.selectedOptions[0];
-    if (!selectedOption || !selectedOption.value) return;
-
-    const name = selectedOption.dataset.name;
-    const price = parseFloat(selectedOption.value);
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${testTable.children.length + 1}</td>
-      <td>${name}</td>
-      <td>${price}</td>
-      <td class="no-print"><button onclick="removeTest(this)">❌</button></td>
-    `;
-    testTable.appendChild(row);
-    calculateTotal();
-    this.selectedIndex = 0; // Reset dropdown
-  });
-
-  function removeTest(btn) {
-    const row = btn.closest("tr");
-    row.remove();
-    calculateTotal();
-    updateSerial();
-  }
-
-  function updateSerial() {
-    const rows = testTable.querySelectorAll("tr");
-    rows.forEach((row, index) => {
-      row.children[0].textContent = index + 1;
+  <script>
+    // Auto set today's date on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('date');
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
     });
-  }
 
-  function calculateTotal() {
+    const testSelect = document.getElementById('testSelect');
+    const testList = document.getElementById('testList');
+    const totalBillSpan = document.getElementById('totalBill');
+    const finalBillSpan = document.getElementById('finalBill');
+    const dueBillSpan = document.getElementById('dueBill');
+    const discountInput = document.getElementById('discount');
+    const dueInput = document.getElementById('dueAmount');
+    const clearButton = document.getElementById('clearButton');
+
     let total = 0;
-    testTable.querySelectorAll("tr").forEach(row => {
-      total += parseFloat(row.children[2].textContent);
+
+    function updateTotals() {
+      const discount = parseInt(discountInput.value) || 0;
+      const due = parseInt(dueInput.value) || 0;
+      const final = total - discount;
+      const grandTotal = final + due;
+
+      totalBillSpan.textContent = total;
+      finalBillSpan.textContent = final >= 0 ? final : 0;
+      dueBillSpan.textContent = grandTotal >= 0 ? grandTotal : 0;
+    }
+
+    // Add test on selection
+    testSelect.addEventListener('change', () => {
+      const selected = testSelect.value;
+      if (!selected) return;
+
+      const [name, priceStr] = selected.split(' - ');
+      const price = parseInt(priceStr);
+
+      // Prevent duplicate test names
+      const existingTests = Array.from(testList.querySelectorAll('tr td:first-child')).map(td => td.textContent);
+      if (existingTests.includes(name)) {
+        alert('এই টেস্ট ইতিমধ্যে যোগ করা হয়েছে।');
+        testSelect.selectedIndex = 0;
+        return;
+      }
+
+      // Add a row with a delete button
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${name}</td>
+        <td>${price}</td>
+        <td><button class="delete-btn" title="মুছুন">x</button></td>
+      `;
+      testList.appendChild(row);
+
+      total += price;
+      updateTotals();
+
+      // Delete button handler
+      row.querySelector('.delete-btn').addEventListener('click', () => {
+        total -= price;
+        row.remove();
+        updateTotals();
+      });
+
+      testSelect.selectedIndex = 0; // Reset select
     });
-    document.getElementById("total").textContent = total;
 
-    const discount = parseFloat(document.getElementById("discount").value) || 0;
-    const due = parseFloat(document.getElementById("due").value) || 0;
-    const final = total - discount + due;
-    document.getElementById("finalTotal").textContent = final;
-  }
+    discountInput.addEventListener('input', updateTotals);
+    dueInput.addEventListener('input', updateTotals);
 
-  function resetForm() {
-    document.getElementById("patientName").value = "";
-    document.getElementById("patientAge").value = "";
-    document.getElementById("doctorName").value = "";
-    document.getElementById("date").value = new Date().toISOString().split('T')[0];
-    document.getElementById("discount").value = 0;
-    document.getElementById("due").value = 0;
-    document.getElementById("total").textContent = 0;
-    document.getElementById("finalTotal").textContent = 0;
-    testTable.innerHTML = "";
-    testSelect.selectedIndex = 0;
-  }
+    clearButton.addEventListener('click', () => {
+      // Clear all inputs
+      document.getElementById('patientName').value = '';
+      document.getElementById('patientAge').value = '';
+      document.getElementById('ageUnit').selectedIndex = 0;
+      document.getElementById('gender').selectedIndex = 0;
+      document.getElementById('mobile').value = '';
+      document.getElementById('doctorName').value = '';
+      // Reset date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date').value = today;
 
-  // Auto-set today's date
-  document.getElementById("date").value = new Date().toISOString().split('T')[0];
-</script>
+      // Clear tests list
+      testList.innerHTML = '';
+      total = 0;
 
+      discountInput.value = 0;
+      dueInput.value = 0;
+
+      updateTotals();
+    });
+
+    document.getElementById('printButton').addEventListener('click', () => {
+      window.print();
+    });
+  </script>
 </body>
-</html>
+  </html>
