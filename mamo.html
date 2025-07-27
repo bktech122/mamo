@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>ডায়াগনস্টিক মেমো</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    .memo {
+      background: #fff;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    .totals {
+      text-align: right;
+      margin-top: 20px;
+    }
+    .btn {
+      background: #38b000;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-print {
+      background: #0077b6;
+    }
+    .btn-reset {
+      background: #e63946;
+    }
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="memo" id="printArea">
+  <h2>ডায়াগনস্টিক সেন্টার - ভাউচার</h2>
+
+  <div class="no-print">
+    <label>রোগীর নাম:</label>
+    <input type="text" id="patientName" placeholder="রোগীর নাম">
+
+    <label>বয়স:</label>
+    <input type="number" id="patientAge" placeholder="বয়স">
+
+    <label>ডাক্তারের নাম:</label>
+    <input type="text" id="doctorName" placeholder="রেফার্ড/ডাক্তারের নাম">
+
+    <label>তারিখ:</label>
+    <input type="date" id="date">
+  </div>
+
+  <label>টেস্ট নির্বাচন করুন:</label>
+  <select id="testSelect">
+    <option value="">-- টেস্ট সিলেক্ট করুন --</option>
+  </select>
+
+  <table id="testTable">
+    <thead>
+      <tr>
+        <th>ক্রমিক</th>
+        <th>টেস্টের নাম</th>
+        <th>মূল্য (৳)</th>
+        <th class="no-print">রিমুভ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <label>ডিসকাউন্ট (৳):</label>
+  <input type="number" id="discount" value="0" oninput="calculateTotal()">
+
+  <label>বকেয়া বিল (৳):</label>
+  <input type="number" id="due" value="0" oninput="calculateTotal()">
+
+  <div class="totals">
+    <p>মোট: <strong><span id="total">0</span> ৳</strong></p>
+    <p>সর্বশেষ মোট (ডিসকাউন্ট ও বকেয়া সহ): <strong><span id="finalTotal">0</span> ৳</strong></p>
+  </div>
+
+  <div class="no-print" style="display: flex; gap: 10px;">
+    <button class="btn btn-print" onclick="window.print()">🖨️ প্রিন্ট ভাউচার</button>
+    <button class="btn btn-reset" onclick="resetForm()">🔄 নতুন ভাউচার</button>
+  </div>
+</div>
+
+<script>
+  const testList = [
+    { name: "Whole Abdomen", price: 900 },
+{ name: "HBS", price: 900 },
+{ name: "Pelvic Organs", price: 700 },
+{ name: "KUB/PG Profile", price: 700 },
+{ name: "Double System", price: 700 },
+{ name: "Breast", price: 900 },
+{ name: "Abdominal Lump", price: 1000 },
+{ name: "Testis/Scrotum", price: 1000 },
+{ name: "Thyroid Gland", price: 800 },
+{ name: "Echocardiogram", price: 1000 },
+{ name: "ECG", price: 300 },
+
+{ name: "Urine R/M/E", price: 100 },
+{ name: "C/S", price: 800 },
+{ name: "Pregnancy Test", price: 150 },
+{ name: "Ketone Bodies", price: 100 },
+{ name: "24 HRS Total Protein & Volume", price: 1000 },
+
+{ name: "Stool R/M/E", price: 200 },
+{ name: "OBT", price: 300 },
+{ name: "Redu Substance", price: 200 },
+
+{ name: "CBC", price: 450 },
+{ name: "CP", price: 350 },
+{ name: "HB%/TC/DC/ESR", price: 120 },
+{ name: "MP", price: 200 },
+{ name: "TC of RBC", price: 200 },
+{ name: "BT/CT", price: 200 },
+{ name: "Platelet Count", price: 200 },
+{ name: "Blood Film Study with CBC", price: 300 },
+{ name: "PBF Study", price: 500 },
+{ name: "Prothrombin Time", price: 500 },
+{ name: "MCV", price: 200 },
+{ name: "PCV", price: 200 },
+{ name: "Circulating E.Count", price: 200 },
+{ name: "Hb-Electrophoresis", price: 1600 },
+
+{ name: "Sugar (One Sample)", price: 100 },
+{ name: "Fasting", price: 100 },
+{ name: "Random", price: 100 },
+{ name: "2 HRS after /Glucose with CUS", price: 150 },
+{ name: "GTT with CUS", price: 500 },
+{ name: "S. Bilirubin (Total)", price: 200 },
+{ name: "SGOT", price: 200 },
+{ name: "SGPT", price: 200 },
+{ name: "S. ALK Phosphatase", price: 500 },
+{ name: "S. ACID Phosphatase", price: 800 },
+{ name: "S. Amylase", price: 1200 },
+{ name: "S. CPK", price: 1200 },
+{ name: "S. LDL", price: 400 },
+{ name: "S. Cholestrol (Total)", price: 400 },
+{ name: "TG", price: 400 },
+{ name: "HDL", price: 400 },
+{ name: "S. Lipid Profile", price: 600 },
+{ name: "S. Urea", price: 500 },
+{ name: "S. Creatinine", price: 500 },
+{ name: "S. Total Protein", price: 500 },
+{ name: "S. Albumin", price: 500 },
+{ name: "S. Uric Acid", price: 500 },
+{ name: "S. Calcium", price: 500 },
+{ name: "S. LFT", price: 1200 },
+{ name: "S. RFT", price: 1000 },
+{ name: "HCV", price: 1000 },
+{ name: "Hbe Ag", price: 1000 },
+
+{ name: "ASO Titre", price: 500 },
+{ name: "RA Test", price: 500 },
+{ name: "Hbs Ag", price: 500 },
+{ name: "Hbs Ag (Confirmatory)", price: 1000 },
+{ name: "VDRL", price: 500 },
+{ name: "TPHA", price: 500 },
+{ name: "Blood Group", price: 100 },
+{ name: "Widal Test", price: 400 },
+{ name: "Aldehyde Test", price: 400 },
+{ name: "ICT for Filaria", price: 1000 },
+{ name: "ICT for Kalazar", price: 1000 },
+{ name: "Rosewaaler Test", price: 800 },
+{ name: "CR Protein", price: 500 },
+{ name: "ANT IGE", price: 1200 },
+{ name: "ANF IGM", price: 1200 },
+{ name: "ANT IGG", price: 1200 },
+{ name: "RH Antibody Titre", price: 1200 },
+{ name: "Coomb's Test (Direct)", price: 1000 },
+{ name: "S. Bilirubin (Dir/Indirect)", price: 200 },
+{ name: "ICT Tuber Culosis", price: 1200 },
+{ name: "HBV-DHA", price: 1200 },
+{ name: "HIV", price: 1200 },
+{ name: "Fluid R/M/E", price: 800 },
+{ name: "Malignant-Cell", price: 1000 },
+{ name: "S. Lipise", price: 1200 },
+{ name: "PAP'S Smear", price: 800 },
+
+{ name: "T3", price: 800 },
+{ name: "T4", price: 800 },
+{ name: "TSH", price: 800 },
+{ name: "LH", price: 800 },
+{ name: "FSH", price: 1200 },
+{ name: "Oestrogen", price: 1200 },
+{ name: "Progesterone", price: 1200 },
+{ name: "Testosterone", price: 1200 },
+{ name: "Growth Hormone", price: 1500 },
+{ name: "Alpha Feto Protein", price: 1500 },
+{ name: "PSA", price: 1200 },
+{ name: "Hbs Ag - Elisa", price: 1000 },
+{ name: "S. Triglyceride", price: 400 },
+{ name: "BUN", price: 400 },
+{ name: "S. Globulin", price: 500 },
+{ name: "S. A G Ratio", price: 1000 },
+
+{ name: "Electrolytes (Na, K, Cl)", price: 1200 },
+{ name: "LFT (3 Sample)", price: 1200 },
+{ name: "LFT (4 Sample)", price: 1200 },
+{ name: "Histopath", price: 2000 },
+
+{ name: "Chest P/A View iaiv (Rt/Lt)", price: 450 },
+{ name: "Chest Oblique (Rt/Lt) View", price: 450 },
+{ name: "BA Meal S/D", price: 1000 },
+{ name: "BA Swallow Oesopha", price: 1000 },
+{ name: "BA Enema Double Contrast", price: 1000 },
+{ name: "COG", price: 600 },
+{ name: "KUB", price: 450 },
+{ name: "IVU", price: 1800 },
+{ name: "RGU/MCU", price: 1800 },
+{ name: "Sinogram", price: 450 },
+{ name: "Sialogram", price: 450 },
+{ name: "L/S Spine B/V", price: 600 },
+{ name: "Cervical Spine B/V", price: 600 },
+{ name: "Naso Pharynx B/V", price: 450 },
+{ name: "Naso Pharynx (Rt/Lt)", price: 450 },
+{ name: "Mastoid B/V", price: 450 },
+{ name: "Mastoid T/T", price: 500 },
+{ name: "PNS OM View", price: 450 },
+{ name: "X-ray Film Size 12/15 (Analog)", price: 450 },
+{ name: "X-ray Film Size 10/12 (Analog)", price: 320 },
+{ name: "X-ray Film Size 8/10 (Analog)", price: 250 },
+
+{ name: "Throat Swab C/S", price: 800 },
+{ name: "KLB", price: 1000 },
+{ name: "Sputum AFB", price: 500 },
+{ name: "A/E", price: 400 },
+{ name: "Tuberculin Test", price: 500 },
+{ name: "EAR Swab C/S", price: 800 },
+{ name: "PUS C/S", price: 800 }
+    // আরও টেস্ট এখানে যুক্ত করতে পারেন
+  ];
+
+  const testSelect = document.getElementById("testSelect");
+  const testTable = document.getElementById("testTable").querySelector("tbody");
+
+  // Populate dropdown
+  testList.forEach(test => {
+    const option = document.createElement("option");
+    option.value = test.price;
+    option.textContent = `${test.name} - ${test.price}৳`;
+    option.dataset.name = test.name;
+    testSelect.appendChild(option);
+  });
+
+  testSelect.addEventListener("change", function () {
+    const selectedOption = this.selectedOptions[0];
+    if (!selectedOption || !selectedOption.value) return;
+
+    const name = selectedOption.dataset.name;
+    const price = parseFloat(selectedOption.value);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${testTable.children.length + 1}</td>
+      <td>${name}</td>
+      <td>${price}</td>
+      <td class="no-print"><button onclick="removeTest(this)">❌</button></td>
+    `;
+    testTable.appendChild(row);
+    calculateTotal();
+    this.selectedIndex = 0; // Reset dropdown
+  });
+
+  function removeTest(btn) {
+    const row = btn.closest("tr");
+    row.remove();
+    calculateTotal();
+    updateSerial();
+  }
+
+  function updateSerial() {
+    const rows = testTable.querySelectorAll("tr");
+    rows.forEach((row, index) => {
+      row.children[0].textContent = index + 1;
+    });
+  }
+
+  function calculateTotal() {
+    let total = 0;
+    testTable.querySelectorAll("tr").forEach(row => {
+      total += parseFloat(row.children[2].textContent);
+    });
+    document.getElementById("total").textContent = total;
+
+    const discount = parseFloat(document.getElementById("discount").value) || 0;
+    const due = parseFloat(document.getElementById("due").value) || 0;
+    const final = total - discount + due;
+    document.getElementById("finalTotal").textContent = final;
+  }
+
+  function resetForm() {
+    document.getElementById("patientName").value = "";
+    document.getElementById("patientAge").value = "";
+    document.getElementById("doctorName").value = "";
+    document.getElementById("date").value = new Date().toISOString().split('T')[0];
+    document.getElementById("discount").value = 0;
+    document.getElementById("due").value = 0;
+    document.getElementById("total").textContent = 0;
+    document.getElementById("finalTotal").textContent = 0;
+    testTable.innerHTML = "";
+    testSelect.selectedIndex = 0;
+  }
+
+  // Auto-set today's date
+  document.getElementById("date").value = new Date().toISOString().split('T')[0];
+</script>
+
+</body>
+</html>
